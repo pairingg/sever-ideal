@@ -14,11 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "post")
 @Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Post {
@@ -34,6 +37,7 @@ public class Post {
     private String imageUrl;
 
     @Column(name = "created_at", nullable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @Column(name = "claim_count", columnDefinition = "INT DEFAULT 0")
