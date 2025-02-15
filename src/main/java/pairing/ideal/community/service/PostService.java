@@ -8,6 +8,7 @@ import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pairing.ideal.community.dto.request.PostRequest;
+import pairing.ideal.community.dto.response.PostResponse;
 import pairing.ideal.community.entity.Post;
 import pairing.ideal.community.repository.PostRepository;
 
@@ -20,6 +21,14 @@ public class PostService {
     public Post savePost(PostRequest postRequest) {
         Post post = postRequest.toEntity(postRequest.content(), postRequest.imageUrl());
         return postRepository.save(post);
+    }
+
+    /* 게시글 조회 */
+    public PostResponse getPost(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() ->
+                new RuntimeException("해당 카테고리가 존재하지 않습니다."));
+        // createdAt 형식 변경
+        return PostResponse.fromEntity(post, formatCreatedAt(post.getCreatedAt()));
     }
 
     /* 글 생성 날짜 formatting */
