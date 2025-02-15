@@ -1,5 +1,6 @@
 package pairing.ideal.community.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,12 @@ public class PostController {
         postService.savePost(postRequest);
         return ResponseEntity.status(HttpStatus.OK)
                 .body("게시글이 등록되었습니다.");
+    }
+
+    /* 게시글 목록 조회 */
+    @GetMapping("")
+    public List<PostResponse> getPost() {
+        return postService.getAllPosts();
     }
 
     /* 게시글 조회 */

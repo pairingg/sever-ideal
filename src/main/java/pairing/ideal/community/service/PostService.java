@@ -23,6 +23,16 @@ public class PostService {
         return postRepository.save(post);
     }
 
+    /* 모든 게시글 조회 */
+    public List<PostResponse> getAllPosts() {
+        List<Post> posts = postRepository.findAll();
+        List<PostResponse> postResponses = new ArrayList<>();
+        for (Post post : posts) {
+            postResponses.add(PostResponse.fromEntity(post, formatCreatedAt(post.getCreatedAt())));
+        }
+        return postResponses;
+    }
+
     /* 게시글 조회 */
     public PostResponse getPost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() ->
