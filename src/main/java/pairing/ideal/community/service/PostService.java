@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pairing.ideal.community.dto.request.PostRequest;
 import pairing.ideal.community.dto.response.PostResponse;
 import pairing.ideal.community.entity.Post;
@@ -35,10 +36,21 @@ public class PostService {
 
     /* 게시글 조회 */
     public PostResponse getPost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() ->
-                new RuntimeException("해당 카테고리가 존재하지 않습니다."));
-        // createdAt 형식 변경
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("해당 게시글이 존재하지 않습니다."));
         return PostResponse.fromEntity(post, formatCreatedAt(post.getCreatedAt()));
+    }
+
+    /* 게시글 삭제 */
+    @Transactional
+    public void deletePost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("해당 게시물은 존재하지 않습니다."));
+        // 삭제 권한 설정
+//        if (!post.getMemberId().equals(memberId)) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("삭제 권한이 없습니다.");
+//        }
+        postRepository.delete(post);
     }
 
     /* 글 생성 날짜 formatting */
