@@ -1,0 +1,72 @@
+name: Deploy Service
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Set Gradlew Permission
+        run: chmod +x gradlew
+
+      - name: Restore application-dev.yaml
+        run: |
+          echo "${{ secrets.APPLICATION_SECRET_YAML }}" | base64 --decode > src/main/resources/application-dev.yaml
+
+      - name: Docker Login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build with Gradle
+        run: ./gradlew bootJar
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Private Compute via Bastion Host
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}   # 🔥 Bastion Host의 Public IP
+          username: ${{ secrets.USERNAME }}   # Bastion Host의 사용자명
+          key: ${{ secrets.SSH_PRIVATE_KEY }}   # Bastion Host에 접속할 SSH 개인키
+          script: |
+            echo "Connecting to Private Compute via Bastion..."
+            sshpass -p ${{ secrets.PASSWORD }} ssh -i ~/.ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.PRIVATE_COMPUTE_IP }} << 'EOF'
+              docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest
+              docker stop ${{ secrets.DOCKER_REPO }} || true
+              docker rm ${{ secrets.DOCKER_REPO }} || true
+
+              docker run -d --name ${{ secrets.DOCKER_REPO }} \
+                --restart always \
+                -p 8081:8081 \
+                ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest
+            EOF
