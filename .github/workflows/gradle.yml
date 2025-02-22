@@ -67,6 +67,6 @@ jobs:
 
               docker run -d --name ${{ secrets.DOCKER_REPO }} \
                 --restart always \
-                -p 8081:8081 \
+                -p 8082:8082 \
                 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest
             EOF
