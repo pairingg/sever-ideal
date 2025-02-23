@@ -9,14 +9,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pairing.ideal.community.dto.request.PostRequest;
+import pairing.ideal.community.dto.response.ParticipantResponse;
 import pairing.ideal.community.dto.response.PostResponse;
+import pairing.ideal.community.entity.Participant;
 import pairing.ideal.community.entity.Post;
+import pairing.ideal.community.repository.ParticipantRepository;
 import pairing.ideal.community.repository.PostRepository;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final ParticipantRepository participantRepository;
 
     /* 게시글 저장 */
     public Post savePost(PostRequest postRequest) {
@@ -64,5 +68,25 @@ public class PostService {
     private String formatCreatedAt(LocalDateTime createdAt) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a h:mm", Locale.ENGLISH);
         return createdAt != null ? createdAt.format(formatter) : null;
+    }
+
+    /* 저요 -> 참여자 생성 */
+    public Participant addParticipant(Long postId, Long userId) {
+        Post post  = postRepository.findByPostId(postId).orElseThrow(() -> new RuntimeException("해당 게시물은 존재하지 않습니다."));
+        Participant participant = Participant.builder().post(post).userId(userId).build();
+        System.out.println(participant.toString());
+        return participantRepository.save(participant);
+    }
+
+    /* 저요 -> 저요 목록 조회 */
+    public List<ParticipantResponse> getParticipants(Long postId) {
+        Post post = postRepository.findByPostId(postId).orElseThrow(()-> new RuntimeException("해당 게시물은 존재하지 않습니다."));
+        List <Participant> Participants = post.getParticipants();
+        List <ParticipantResponse> participantResponses = new ArrayList<>();
+        for (Participant participant : Participants) {
+            participantResponses.add(ParticipantResponse.fromEntity(participant));
+        }
+
+        return participantResponses;
     }
 }

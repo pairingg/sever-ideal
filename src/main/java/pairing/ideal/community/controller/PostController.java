@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pairing.ideal.community.dto.request.PostRequest;
+import pairing.ideal.community.dto.response.ParticipantResponse;
 import pairing.ideal.community.dto.response.PostResponse;
+import pairing.ideal.community.entity.Participant;
 import pairing.ideal.community.service.PostService;
 
 @RestController
@@ -54,6 +57,29 @@ public class PostController {
     @PutMapping("/{postId}")
     public PostResponse updatePost(@PathVariable(name = "postId") Long postId, @RequestBody PostRequest postRequest) {
         return postService.updatePost(postId, postRequest);
+    }
+
+    /* 저요 버튼 클릭 요청 */
+    @PostMapping("/{postId}/participations")
+    public ResponseEntity<String> addParticipation(@RequestHeader(value = "X-Authorization-email", required = false) String email,
+                                                   @RequestHeader(value = "X-Authorization-userId") Long userId,
+                                                   @PathVariable(name = "postId") Long postId) {
+
+//        postService.addParticipant(postId, memberId);
+//        memberId = 1L;
+        System.out.println("저요 controller 실행");
+        System.out.println(userId);
+        System.out.println(email);
+        postService.addParticipant(postId, userId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("참여가 완료되었습니다.");
+
+    }
+
+    /* 저요 목록 조회 */
+    @GetMapping("/{postId}/participations")
+    public List<ParticipantResponse> getParticipants(@PathVariable(name = "postId") Long postId) {
+        return postService.getParticipants(postId);
     }
 }
 
