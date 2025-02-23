@@ -36,7 +36,7 @@ public class PostService {
 
     /* 게시글 조회 */
     public PostResponse getPost(Long postId) {
-        Post post = postRepository.findById(postId)
+        Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new RuntimeException("해당 게시글이 존재하지 않습니다."));
         return PostResponse.fromEntity(post, formatCreatedAt(post.getCreatedAt()));
     }
@@ -44,13 +44,20 @@ public class PostService {
     /* 게시글 삭제 */
     @Transactional
     public void deletePost(Long postId) {
-        Post post = postRepository.findById(postId)
+        Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new RuntimeException("해당 게시물은 존재하지 않습니다."));
         // 삭제 권한 설정
 //        if (!post.getMemberId().equals(memberId)) {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("삭제 권한이 없습니다.");
 //        }
         postRepository.delete(post);
+    }
+
+    /* 게시글 수정 */
+    public PostResponse updatePost(Long postId, PostRequest postRequest) {
+        Post post = postRepository.findByPostId(postId).orElseThrow(() -> new RuntimeException("해당 게시물은 존재하지 않습니다."));
+        post.update(postRequest.content(), postRequest.imageUrl());
+        return PostResponse.fromEntity(postRepository.save(post), formatCreatedAt(post.getCreatedAt()));
     }
 
     /* 글 생성 날짜 formatting */

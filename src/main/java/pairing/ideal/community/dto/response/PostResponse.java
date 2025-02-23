@@ -10,7 +10,7 @@ public record PostResponse(
 ) {
     public static PostResponse fromEntity(Post post, String formattedCreatedAt) {
         return new PostResponse(
-                post.getId(),
+                post.getPostId(),
                 post.getContent(),
                 post.getImageUrl(),
                 formattedCreatedAt
