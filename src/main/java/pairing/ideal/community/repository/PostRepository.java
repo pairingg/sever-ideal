@@ -7,7 +7,7 @@ import pairing.ideal.community.entity.Post;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findByPostId(Long postId);
-    List<Post> findByUserId(Long userId);
+    List<Post> findByMember_UserId(Long userId);
 
 
 }

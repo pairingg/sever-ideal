@@ -1,9 +1,9 @@
 package pairing.ideal.community.dto.response;
-
 import pairing.ideal.community.entity.Post;
 
-public record PostResponse(
+public record MyPostResponse(
         Long id,
+        Long userId,
         String name,
         int age,
         String city,
@@ -11,9 +11,10 @@ public record PostResponse(
         String imageUrl,
         String createdAt
 ) {
-    public static PostResponse fromEntity(Post post, String formattedCreatedAt) {
-        return new PostResponse(
+    public static MyPostResponse fromEntity(Post post, String formattedCreatedAt) {
+        return new MyPostResponse(
                 post.getPostId(),
+                post.getMember().getUserId(),
                 post.getMember().getName(),
                 post.getMember().getAge(),
                 post.getMember().getCity(),
@@ -24,10 +25,13 @@ public record PostResponse(
     }
 }
 
-// id: number;
-// name: string;
-// age: number;
-// city: string;
-// content: string;
-//  imageUrl? string;
-// createdAt: Date | string
+//export interface MyPost {
+//    id: number;
+//    userId: number;
+//    name: string;
+//    age: number;
+//    city: string;
+//    content: string;
+//    imageUrl: string;
+//    createdAt: Date | string;
+//}
