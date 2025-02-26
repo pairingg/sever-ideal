@@ -67,4 +67,5 @@ jobs:
                 --restart always \
                 --network mysql-network \
                 -p 8082:8082 \
+                -e "SPRING_PROFILES_ACTIVE=dev" \
                 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest
