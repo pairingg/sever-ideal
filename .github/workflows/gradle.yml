@@ -52,21 +52,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to Private Compute via Bastion Host
+      - name: SSH Remote Commands
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.HOST }}   # 🔥 Bastion Host의 Public IP
-          username: ${{ secrets.USERNAME }}   # Bastion Host의 사용자명
-          key: ${{ secrets.SSH_PRIVATE_KEY }}   # Bastion Host에 접속할 SSH 개인키
+          host: ${{ secrets.HOST }}
+          port: 22
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
           script: |
-            echo "Connecting to Private Compute via Bastion..."
-            sshpass -p ${{ secrets.PASSWORD }} ssh -i ~/.ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.PRIVATE_COMPUTE_IP }} << 'EOF'
-              docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest
-              docker stop ${{ secrets.DOCKER_REPO }} || true
-              docker rm ${{ secrets.DOCKER_REPO }} || true
-
-              docker run -d --name ${{ secrets.DOCKER_REPO }} \
+            docker pull ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_REPO}}:latest
+            docker stop ${{secrets.DOCKER_REPO}} || true
+            docker rm ${{secrets.DOCKER_REPO}} || true
+            docker run -d --name ${{ secrets.DOCKER_REPO }} \
                 --restart always \
+                --network mysql-network \
                 -p 8082:8082 \
                 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest
-            EOF
