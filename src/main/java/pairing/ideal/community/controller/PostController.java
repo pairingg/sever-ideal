@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pairing.ideal.community.dto.request.PostRequest;
+import pairing.ideal.community.dto.response.MyPostResponse;
 import pairing.ideal.community.dto.response.ParticipantResponse;
 import pairing.ideal.community.dto.response.PostResponse;
-import pairing.ideal.community.entity.Participant;
 import pairing.ideal.community.service.PostService;
 
 @RestController
@@ -43,8 +43,8 @@ public class PostController {
 
     /* 내가 쓴 게시글 조회 */
     @GetMapping("/myposts")
-    public List<PostResponse> getMyPosts(@RequestHeader(value = "X-Authorization-email") String email,
-                                         @RequestHeader(value = "X-Authorization-userId") Long userId) {
+    public List<MyPostResponse> getMyPosts(@RequestHeader(value = "X-Authorization-email") String email,
+                                           @RequestHeader(value = "X-Authorization-userId") Long userId) {
         return postService.getMyPosts(userId);
     }
 

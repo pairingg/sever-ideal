@@ -11,22 +11,28 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pairing.ideal.community.dto.request.PostRequest;
+import pairing.ideal.community.dto.response.MyPostResponse;
 import pairing.ideal.community.dto.response.ParticipantResponse;
 import pairing.ideal.community.dto.response.PostResponse;
 import pairing.ideal.community.entity.Participant;
 import pairing.ideal.community.entity.Post;
 import pairing.ideal.community.repository.ParticipantRepository;
 import pairing.ideal.community.repository.PostRepository;
+import pairing.ideal.member.entity.Member;
+import pairing.ideal.member.repository.MemberRepository;
+import pairing.ideal.member.service.MemberService;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
     private final ParticipantRepository participantRepository;
+    private final MemberRepository memberRepository;
 
     /* 게시글 저장 */
     public Post savePost(PostRequest postRequest, Long userId) {
-        Post post = postRequest.toEntity(userId, postRequest.content(), postRequest.imageUrl());
+        Member member = memberRepository.findById(userId).orElse(null);
+        Post post = postRequest.toEntity(member, postRequest.content(), postRequest.imageUrl());
         return postRepository.save(post);
     }
 
@@ -41,11 +47,11 @@ public class PostService {
     }
 
     /* 내가 쓴 게시글 조회 */
-    public List<PostResponse> getMyPosts(Long userId) {
-        List<Post> myPosts = postRepository.findByUserId(userId);
-        List<PostResponse> postResponses = new ArrayList<>();
+    public List<MyPostResponse> getMyPosts(Long userId) {
+        List<Post> myPosts = postRepository.findByMember_UserId(userId);
+        List<MyPostResponse> postResponses = new ArrayList<>();
         for (Post post : myPosts) {
-            postResponses.add(PostResponse.fromEntity(post, formatCreatedAt(post.getCreatedAt())));
+            postResponses.add(MyPostResponse.fromEntity(post, formatCreatedAt(post.getCreatedAt())));
         }
         return postResponses;
     }
@@ -54,6 +60,7 @@ public class PostService {
     public PostResponse getPost(Long postId) {
         Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new RuntimeException("해당 게시글이 존재하지 않습니다."));
+
         return PostResponse.fromEntity(post, formatCreatedAt(post.getCreatedAt()));
     }
 
@@ -63,7 +70,7 @@ public class PostService {
         Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new RuntimeException("해당 게시물은 존재하지 않습니다."));
         // 삭제 권한 설정
-        if (!post.getUserId().equals(userId)) {
+        if (!(post.getMember().getUserId() == userId)) {
             throw new RuntimeException("삭제 권한이 없습니다.");
         }
         postRepository.delete(post);
@@ -73,7 +80,7 @@ public class PostService {
     public PostResponse updatePost(Long userId, Long postId, PostRequest postRequest) {
         Post post = postRepository.findByPostId(postId).orElseThrow(() -> new RuntimeException("해당 게시물은 존재하지 않습니다."));
         // 수정 권한 검사
-        if (!post.getUserId().equals(userId)) {
+        if (!(post.getMember().getUserId() == userId)) {
             throw new RuntimeException("수정 권한이 없습니다.");
         }
         post.update(postRequest.content(), postRequest.imageUrl());
@@ -88,8 +95,9 @@ public class PostService {
 
     /* 저요 -> 참여자 생성 */
     public Participant addParticipant(Long postId, Long userId) {
+        Member member = memberRepository.findById(userId).orElse(null);
         Post post  = postRepository.findByPostId(postId).orElseThrow(() -> new RuntimeException("해당 게시물은 존재하지 않습니다."));
-        Participant participant = Participant.builder().post(post).userId(userId).build();
+        Participant participant = Participant.builder().post(post).member(member).build();
         System.out.println(participant.toString());
         return participantRepository.save(participant);
     }
