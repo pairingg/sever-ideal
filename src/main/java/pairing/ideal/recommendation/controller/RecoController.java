@@ -1,12 +1,18 @@
 package pairing.ideal.recommendation.controller;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import pairing.ideal.member.common.Gender;
 import pairing.ideal.member.entity.CustomUserDetails;
+import pairing.ideal.member.entity.Hobby;
 import pairing.ideal.member.entity.Member;
+import pairing.ideal.member.entity.Photo;
+import pairing.ideal.member.repository.HobbyRepository;
+import pairing.ideal.member.repository.MemberRepository;
 import pairing.ideal.recommendation.dto.request.EnrollRequest;
 import pairing.ideal.recommendation.dto.response.KeywordResponse;
 import pairing.ideal.recommendation.dto.response.RecoResponse;
@@ -18,6 +24,8 @@ import pairing.ideal.recommendation.service.RecoService;
 @RequiredArgsConstructor
 public class RecoController {
     private final RecoService recoService;
+    private final MemberRepository memberRepository;
+    private final HobbyRepository hobbyRepository;
 
     /**
      * 이상형 등록 시 정보 입력
@@ -38,14 +46,16 @@ public class RecoController {
 
 
     @GetMapping("/recommend/keyword")
-    public List<KeywordResponse> getKeyword(){
+    public List<KeywordResponse> getKeyword() {
         return recoService.getRecoKeywords();
     }
-//
-//    /* 키워드 추천 */
-//    @GetMapping("/recommend/{keywordId")
-//    public List<RecoResponse> getRecoResults(@PathVariable String keywordId) {
-//        return recoService.getKeywordResults;
-//    }
+
+    //
+    /* 키워드 추천 */
+    @GetMapping("/recommend/{keywordId}")
+    public List<RecoResponse> getRecoResults(@PathVariable String keywordId,
+                                             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return recoService.getKeywordResults(keywordId, customUserDetails.getMember());
+    }
 
 }
