@@ -12,7 +12,6 @@ import pairing.ideal.member.entity.Member;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 @Table(name = "ideal_type")
