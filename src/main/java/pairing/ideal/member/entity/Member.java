@@ -83,10 +83,12 @@ public class Member {
 
     /* Post 연관 관계 */
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Post> posts = new ArrayList<>();
 
     /* Participant 연관 관계 */
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Participant> participants= new ArrayList<>();
 
     public Member addInfo(ProfileDTO profileDTO) {

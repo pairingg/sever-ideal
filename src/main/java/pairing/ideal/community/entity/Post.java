@@ -48,9 +48,11 @@ public class Post {
     private LocalDateTime createdAt;
 
     @Column(name = "claim_count", columnDefinition = "INT DEFAULT 0")
+    @Builder.Default
     private int claimCount = 0;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Participant> participants = new ArrayList<>();
 
     public void update(String content, String imageUrl) {

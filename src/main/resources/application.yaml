@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: ideal
+  profiles:
+    active: dev
+
+
+server:
+  port: 8081
