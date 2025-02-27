@@ -34,7 +34,8 @@ public class RecoController {
     /* 기본 추천 */
     /* 메인 페이지에서 바로 뜨는데 2명 추천 결과랑, 키워드 리스트 보내줘야함 */
     @GetMapping("/recommend")
-    public List<Member> getRecoResults(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+//    public List<Member> getRecoResults(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public List<RecoResponse> getRecoResults(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return recoService.getRecoResults(customUserDetails.getMember());
 
     }

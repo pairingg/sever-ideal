@@ -29,7 +29,7 @@ public class RecoService {
 
 
 //    public List<RecoResponse> getRecoResults (Member member) {
-    public List<Member> getRecoResults (Member member) {
+    public List<RecoResponse> getRecoResults (Member member) {
 
         // 지금 요청 보낸사람의 이상형 정보
         IdealType idealType = idealRepository.findByMember(member)
@@ -40,7 +40,14 @@ public class RecoService {
         List<Member> matchingMembers = memberRepository.findMatchingMembers(idealType.getMember().getUserId())
                 .orElseThrow(() -> new RuntimeException("조건에 맞는 이상형이 없습니다."));
         Collections.shuffle(matchingMembers);
-        return matchingMembers.subList(0, 2);
+
+        List<Member> selectedMembers = matchingMembers.stream().limit(2).toList();
+        List<RecoResponse> recoResponses = new ArrayList<>();
+        for (Member m : selectedMembers) {
+            recoResponses.add(RecoResponse.fromEntity(m));
+        }
+        return recoResponses;
+//        return matchingMembers.subList(0, 2);
     }
 
     public List<KeywordResponse> getRecoKeywords () {
