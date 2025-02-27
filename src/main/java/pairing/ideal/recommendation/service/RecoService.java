@@ -1,7 +1,6 @@
 package pairing.ideal.recommendation.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pairing.ideal.member.entity.Member;
@@ -10,14 +9,10 @@ import pairing.ideal.recommendation.dto.request.EnrollRequest;
 import pairing.ideal.recommendation.dto.response.KeywordResponse;
 import pairing.ideal.recommendation.dto.response.RecoResponse;
 import pairing.ideal.recommendation.entity.IdealType;
-import pairing.ideal.recommendation.entity.Keyword;
 import pairing.ideal.recommendation.repository.IdealRepository;
-import java.net.URL;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

@@ -1,16 +1,11 @@
 package pairing.ideal.recommendation.controller;
 
 import java.util.List;
-import java.util.Optional;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import pairing.ideal.member.common.Gender;
 import pairing.ideal.member.entity.CustomUserDetails;
-import pairing.ideal.member.entity.Hobby;
 import pairing.ideal.member.entity.Member;
-import pairing.ideal.member.entity.Photo;
 import pairing.ideal.member.repository.HobbyRepository;
 import pairing.ideal.member.repository.MemberRepository;
 import pairing.ideal.recommendation.dto.request.EnrollRequest;

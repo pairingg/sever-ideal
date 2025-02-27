@@ -26,7 +26,6 @@ public record RecoResponse(
 
 }
 
-
 //export interface idealRecommendList {
 //  name: string;
 //  age: number;
