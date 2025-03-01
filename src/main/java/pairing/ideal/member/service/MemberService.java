@@ -2,6 +2,7 @@ package pairing.ideal.member.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -29,6 +30,10 @@ public class MemberService {
     private final HobbyRepository hobbyRepository;
     private final PhotoRepository photoRepository;
     private final RestTemplate restTemplate;
+    @Value("${cloud.ncp.storage.end-point}")
+    private String storageEndPoint;
+    @Value("${cloud.ncp.storage.bucket-name-member}")
+    private String storageMemberBucketName;
 
     @Transactional
     public String postProfile(ProfileDTO profileDTO, String email){
@@ -51,7 +56,7 @@ public class MemberService {
         Photo photo = photoRepository.findByMember(byEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid photo"));
         ProfileDTO profileDTO = new ProfileDTO();
-        return profileDTO.from(byEmail, hobby, photo);
+        return profileDTO.from(byEmail, hobby, photo, storageEndPoint, storageMemberBucketName);
     }
 
     public ProfileDTO getOtherProfile(long userId){

@@ -76,7 +76,7 @@ public class Member {
     private boolean enrolled = false;
 
     @OneToOne
-    private Hobby hobby;;
+    private Hobby hobby;
 
     @OneToOne
     private Photo photo;

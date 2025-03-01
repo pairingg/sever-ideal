@@ -47,7 +47,7 @@ public class Post {
 
     @Column(name = "created_at", nullable = false)
     @CreationTimestamp
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date createdAt;
 
     @Column(name = "claim_count", columnDefinition = "INT DEFAULT 0")
@@ -62,6 +62,5 @@ public class Post {
         this.content = content;
         this.imageUrl = imageUrl;
     }
-
 
 }
