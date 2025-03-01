@@ -13,14 +13,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class S3Config {
+public class S3ConfigCommunity {
 
     private final AmazonS3 s3Client;
 
     @Value("${cloud.ncp.storage.bucket-name-community}")
     private String bucketName;
 
-    public S3Config(
+    public S3ConfigCommunity(
             @Value("${cloud.ncp.storage.access-key}") String accessKey,
             @Value("${cloud.ncp.storage.secret-key}") String secretKey,
             @Value("${cloud.ncp.storage.end-point}") String endPoint,

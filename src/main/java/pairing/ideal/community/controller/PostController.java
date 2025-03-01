@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import pairing.ideal.community.config.S3Config;
+import pairing.ideal.community.config.S3ConfigCommunity;
 import pairing.ideal.community.dto.request.PostRequest;
 import pairing.ideal.community.dto.response.MyPostResponse;
 import pairing.ideal.community.dto.response.ParticipantResponse;
@@ -22,7 +22,7 @@ import pairing.ideal.member.entity.CustomUserDetails;
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
-    private final S3Config s3Config;
+    private final S3ConfigCommunity s3Config;
 
     /* 게시글 생성*/
     @PostMapping
