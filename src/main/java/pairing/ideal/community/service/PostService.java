@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,10 @@ public class PostService {
     private final PostRepository postRepository;
     private final ParticipantRepository participantRepository;
     private final MemberRepository memberRepository;
+    @Value("${cloud.ncp.storage.end-point}")
+    private String storageEndPoint;
+    @Value("${cloud.ncp.storage.bucket-name-member}")
+    private String storageMemberBucketName;
 
     /* 게시글 저장 */
     public Post savePost(PostRequest postRequest, Long userId) {
@@ -41,7 +46,7 @@ public class PostService {
         List<Post> posts = postRepository.findAll();
         List<PostResponse> postResponses = new ArrayList<>();
         for (Post post : posts) {
-            postResponses.add(PostResponse.fromEntity(post));
+            postResponses.add(PostResponse.fromEntity(post, storageEndPoint, storageMemberBucketName));
         }
         return postResponses;
     }
@@ -51,7 +56,7 @@ public class PostService {
         List<Post> myPosts = postRepository.findByMember_UserId(userId);
         List<MyPostResponse> postResponses = new ArrayList<>();
         for (Post post : myPosts) {
-            postResponses.add(MyPostResponse.fromEntity(post));
+            postResponses.add(MyPostResponse.fromEntity(post, storageEndPoint, storageMemberBucketName));
         }
         return postResponses;
     }
@@ -61,7 +66,7 @@ public class PostService {
         Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new RuntimeException("해당 게시글이 존재하지 않습니다."));
 
-        return PostResponse.fromEntity(post);
+        return PostResponse.fromEntity(post, storageEndPoint, storageMemberBucketName);
     }
 
     /* 게시글 삭제 */
@@ -84,7 +89,8 @@ public class PostService {
             throw new RuntimeException("수정 권한이 없습니다.");
         }
         post.update(postRequest.content(), postRequest.imageUrl());
-        return PostResponse.fromEntity(postRepository.save(post));
+        Post savedPost = postRepository.save(post);
+        return PostResponse.fromEntity(savedPost, storageEndPoint, storageMemberBucketName);
     }
 
     /* 글 생성 날짜 formatting */

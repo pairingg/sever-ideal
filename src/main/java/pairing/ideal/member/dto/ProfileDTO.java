@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 import pairing.ideal.member.common.Drinking;
 import pairing.ideal.member.common.Gender;
 import pairing.ideal.member.common.Smoking;
@@ -36,7 +37,9 @@ public class ProfileDTO {
 
     private List<String> images = new ArrayList<>();
 
-    public ProfileDTO from(Member member, Hobby hobby, Photo photo) {
+
+    public ProfileDTO from(Member member, Hobby hobby, Photo photo,@Value("${cloud.ncp.storage.end-point}") String endPoint, @Value("${cloud.ncp.storage.bucket-name-member}")String bucketName) {
+        List<String> fullImageUrls = new ArrayList<>();
         this.name = member.getName();
         this.age = member.getAge();
         this.gender = member.getGender();
@@ -47,7 +50,12 @@ public class ProfileDTO {
         this.city = member.getCity();
         this.district = member.getDistrict();
         this.hobby = hobby.getHobby();
-        this.images = photo.getPhoto();
+
+        List<String> images = photo.getPhoto();
+        for (String image : images) {
+            fullImageUrls.add(endPoint + "/" + bucketName + "/" + image);
+        }
+        this.images = fullImageUrls;
         return this;
     }
 }

@@ -14,6 +14,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,7 +48,7 @@ public class Post {
     @Column(name = "created_at", nullable = false)
     @CreationTimestamp
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime createdAt;
+    private Date createdAt;
 
     @Column(name = "claim_count", columnDefinition = "INT DEFAULT 0")
     @Builder.Default
@@ -61,6 +62,5 @@ public class Post {
         this.content = content;
         this.imageUrl = imageUrl;
     }
-
 
 }
