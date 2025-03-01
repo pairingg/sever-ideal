@@ -32,13 +32,14 @@ public class S3Config {
                 .build();
     }
 
-    public String generatePresignedUrl(String objectKey, HttpMethod method, long expirationTimeMillis) {
+    public String generatePresignedUrl(String objectKey, HttpMethod method, long expirationTimeMillis,String contentType) {
         Date expiration = new Date(System.currentTimeMillis() + expirationTimeMillis);
 
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
                 new GeneratePresignedUrlRequest(bucketName, objectKey)
                         .withMethod(method)
-                        .withExpiration(expiration);
+                        .withExpiration(expiration)
+                        .withContentType(contentType); // Content-Type 추가
 
         URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest);
         return url.toString();

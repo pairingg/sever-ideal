@@ -78,8 +78,8 @@ public class MemberController {
     }
 
     @GetMapping("presigned-url")
-    public Map<String, String> getPresignedUrl(@RequestParam String fileName) {
-        String presignedUrl = s3Config.generatePresignedUrl(fileName, HttpMethod.PUT, 600000);
+    public Map<String, String> getPresignedUrl(@RequestParam String fileName, @RequestParam String contentType) {
+        String presignedUrl = s3Config.generatePresignedUrl(fileName, HttpMethod.PUT, 600000, contentType);
         return Map.of("url", presignedUrl);
     }
 
