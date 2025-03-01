@@ -1,5 +1,6 @@
 package pairing.ideal.community.dto.response;
 import java.time.LocalDateTime;
+import java.util.Date;
 import pairing.ideal.community.entity.Post;
 
 public record MyPostResponse(
@@ -10,7 +11,7 @@ public record MyPostResponse(
         String city,
         String content,
         String imageUrl,
-        LocalDateTime createdAt,
+        Date createdAt,
         String profileImg
 ) {
     public static MyPostResponse fromEntity(Post post) {
