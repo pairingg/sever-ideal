@@ -20,7 +20,7 @@ public record PostResponse(
                 ? post.getMember().getPhoto().getPhoto().get(0)
                 : null; // 첫 번째 사진이 없으면 null 반환
 
-        String profileImgUrl = storageEndPoint + storageMemberBucketName + profileImg;
+        String profileImgUrl = storageEndPoint + "/" + storageMemberBucketName + "/" + profileImg;
 
         return new PostResponse(
                 post.getPostId(),
