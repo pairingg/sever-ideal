@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pairing.ideal.member.config.S3Config;
 import pairing.ideal.member.dto.ProfileDTO;
+import pairing.ideal.member.dto.requset.CompareFace;
 import pairing.ideal.member.dto.response.DrinkAndSmokeResponse;
 import pairing.ideal.member.entity.CustomUserDetails;
 import pairing.ideal.member.service.MemberService;
@@ -80,5 +81,11 @@ public class MemberController {
     public Map<String, String> getPresignedUrl(@RequestParam String fileName) {
         String presignedUrl = s3Config.generatePresignedUrl(fileName, HttpMethod.PUT, 600000);
         return Map.of("url", presignedUrl);
+    }
+
+    @PostMapping("face")
+    public String compareImage(@RequestBody CompareFace compareFace,
+                               @AuthenticationPrincipal CustomUserDetails customUserDetails){
+        return memberService.compareImage(compareFace, customUserDetails.getMember());
     }
 }

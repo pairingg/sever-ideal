@@ -35,21 +35,17 @@ public class AuthService {
         ResponseEntity<String> accessTokenRes = oauthLoginInfo.requestAccessToken(request.code());
         OauthTokenDto accessTokenDto = oauthLoginInfo.getAccessToken(accessTokenRes);
         ResponseEntity<String> stringResponseEntity = oauthLoginInfo.requestUserInfo(accessTokenDto);
-        System.out.println(stringResponseEntity.getBody());
         Member userInfo = oauthLoginInfo.getUserInfo(stringResponseEntity);
-        System.out.println(userInfo);
-        // 유저 정보 만들었습니다.
+        
         Member savedMember;
         if (!emailExists(userInfo.getEmail())) {
-            // 계정이 존재 하지 않으면 만들어서
             savedMember = memberRepository.save(userInfo);
         }
         savedMember = memberRepository.findByEmail(userInfo.getEmail())
                 .orElseThrow(RuntimeException::new);
-        // 있으면 패스
+        
         String jwt = jwtUtils.generateToken(userInfo.getEmail(), savedMember.getUserId());
-        System.out.println(jwt);
-        return new OauthResponse(jwt,savedMember.isEnrolled());
+        return new OauthResponse(jwt, savedMember.isEnrolled());
     }
 
     private OauthLoginInfo findOAuth2LoginType(LoginType type) {

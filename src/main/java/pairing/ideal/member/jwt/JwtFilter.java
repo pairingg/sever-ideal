@@ -35,7 +35,7 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 // 유저 정보를 찾아온다.
                 String username = jwtUtils.parseToken(token);
-                // 첮어소
+                // 첫어소
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 Authentication authentication =
                         new UsernamePasswordAuthenticationToken(

@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Builder
 @Getter
 public class CustomUserDetails implements UserDetails {
-
     private Member member;
 
     public CustomUserDetails(Member member) {
