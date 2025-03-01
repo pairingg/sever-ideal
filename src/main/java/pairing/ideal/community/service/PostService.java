@@ -61,6 +61,8 @@ public class PostService {
         Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new RuntimeException("해당 게시글이 존재하지 않습니다."));
 
+
+
         return PostResponse.fromEntity(post, formatCreatedAt(post.getCreatedAt()));
     }
 
