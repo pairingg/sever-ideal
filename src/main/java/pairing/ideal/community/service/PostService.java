@@ -41,7 +41,7 @@ public class PostService {
         List<Post> posts = postRepository.findAll();
         List<PostResponse> postResponses = new ArrayList<>();
         for (Post post : posts) {
-            postResponses.add(PostResponse.fromEntity(post, formatCreatedAt(post.getCreatedAt())));
+            postResponses.add(PostResponse.fromEntity(post));
         }
         return postResponses;
     }
@@ -51,7 +51,7 @@ public class PostService {
         List<Post> myPosts = postRepository.findByMember_UserId(userId);
         List<MyPostResponse> postResponses = new ArrayList<>();
         for (Post post : myPosts) {
-            postResponses.add(MyPostResponse.fromEntity(post, formatCreatedAt(post.getCreatedAt())));
+            postResponses.add(MyPostResponse.fromEntity(post));
         }
         return postResponses;
     }
@@ -61,9 +61,7 @@ public class PostService {
         Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new RuntimeException("해당 게시글이 존재하지 않습니다."));
 
-
-
-        return PostResponse.fromEntity(post, formatCreatedAt(post.getCreatedAt()));
+        return PostResponse.fromEntity(post);
     }
 
     /* 게시글 삭제 */
@@ -86,14 +84,14 @@ public class PostService {
             throw new RuntimeException("수정 권한이 없습니다.");
         }
         post.update(postRequest.content(), postRequest.imageUrl());
-        return PostResponse.fromEntity(postRepository.save(post), formatCreatedAt(post.getCreatedAt()));
+        return PostResponse.fromEntity(postRepository.save(post));
     }
 
     /* 글 생성 날짜 formatting */
-    private String formatCreatedAt(LocalDateTime createdAt) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a h:mm", Locale.ENGLISH);
-        return createdAt != null ? createdAt.format(formatter) : null;
-    }
+//    private String formatCreatedAt(LocalDateTime createdAt) {
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a h:mm", Locale.ENGLISH);
+//        return createdAt != null ? createdAt.format(formatter) : null;
+//    }
 
     /* 저요 -> 참여자 생성 */
     public Participant addParticipant(Long postId, Long userId) {
