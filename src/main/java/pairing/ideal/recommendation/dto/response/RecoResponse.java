@@ -11,7 +11,7 @@ public record RecoResponse(
         int age,
         String city,
         String district,
-        List<URL> images
+        List<String> images
 ) {
 
     public static RecoResponse fromEntity(Member member) {

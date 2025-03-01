@@ -27,12 +27,7 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests(
                 request -> request
                         .requestMatchers(
-                                "/member/**",
-                                "/oauth/**",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/swagger-resources/**",
-                                "/ideal/recommend/**"
+                                "/**"
                         )
                         .permitAll()
                         .anyRequest()

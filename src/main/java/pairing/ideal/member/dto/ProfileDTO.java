@@ -34,7 +34,7 @@ public class ProfileDTO {
 
     private List<String> hobby = new ArrayList<>();
 
-    private List<URL> images = new ArrayList<>();
+    private List<String> images = new ArrayList<>();
 
     public ProfileDTO from(Member member, Hobby hobby, Photo photo) {
         this.name = member.getName();

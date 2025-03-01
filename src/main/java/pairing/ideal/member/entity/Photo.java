@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import pairing.ideal.member.converter.StringListConverter;
 import pairing.ideal.member.converter.UrlListConverter;
 
 @Builder
@@ -26,14 +27,14 @@ public class Photo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long photoId;
 
-    @Convert(converter = UrlListConverter.class)
+    @Convert(converter = StringListConverter.class)
     @Builder.Default
-    private List<URL> photo = new ArrayList<>();
+    private List<String> photo = new ArrayList<>();
 
     @OneToOne
     private Member member;
 
-    public Photo(Member save, List<URL> photo) {
+    public Photo(Member save, List<String> photo) {
         this.member = save;
         this.photo = photo;
     }
