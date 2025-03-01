@@ -1,18 +1,15 @@
 package pairing.ideal.community.controller;
 
 import java.util.List;
+import java.util.Map;
+
+import com.amazonaws.HttpMethod;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import pairing.ideal.community.config.S3Config;
 import pairing.ideal.community.dto.request.PostRequest;
 import pairing.ideal.community.dto.response.MyPostResponse;
 import pairing.ideal.community.dto.response.ParticipantResponse;
@@ -25,6 +22,7 @@ import pairing.ideal.member.entity.CustomUserDetails;
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
+    private final S3Config s3Config;
 
     /* 게시글 생성*/
     @PostMapping
@@ -86,6 +84,12 @@ public class PostController {
                                                      @PathVariable(name = "postId") Long postId) {
 
         return postService.getParticipants(postId, customUserDetails.getMember().getUserId());
+    }
+
+    @GetMapping("presigned-url")
+    public Map<String, String> getPresignedUrl(@RequestParam String fileName, @RequestParam String contentType) {
+        String presignedUrl = s3Config.generatePresignedUrl(fileName, HttpMethod.PUT, 600000, contentType);
+        return Map.of("url", presignedUrl);
     }
 }
 

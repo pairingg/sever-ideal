@@ -97,6 +97,7 @@ cloud:
       end-point: https://kr.object.ncloudstorage.com
       region-name: kr-standard
       bucket-name-member: pairing-member
+      bucket-name-community: pairing-board
       access-key: ncp_iam_BPAMKR1mHeuc9rnvTiRt
       secret-key: ncp_iam_BPKMKR3rUgjamkRkqg5DXPHXLVY2siewl0
 
