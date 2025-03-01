@@ -50,6 +50,7 @@ public class EnrollRequest {
                 .hobby(hobby)
                 .drink(drink)
                 .smoke(smoke)
+                .member(member)
                 .build();
     }
 }

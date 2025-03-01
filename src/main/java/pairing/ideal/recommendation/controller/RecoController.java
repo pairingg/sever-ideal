@@ -31,6 +31,17 @@ public class RecoController {
         return recoService.enrollIdeal(enrollRequest, customUserDetails.getMember());
     }
 
+    @GetMapping
+    public IdealType getIdeal(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        return recoService.getIdeal(customUserDetails.getMember());
+    }
+
+    @PutMapping
+    public IdealType changeIdeal(@RequestBody EnrollRequest enrollRequest,
+                                 @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return recoService.enrollIdeal(enrollRequest, customUserDetails.getMember());
+    }
+
     /* 기본 추천 */
     /* 메인 페이지에서 바로 뜨는데 2명 추천 결과랑, 키워드 리스트 보내줘야함 */
     @GetMapping("/recommend")

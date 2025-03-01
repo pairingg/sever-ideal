@@ -68,7 +68,7 @@ spring:
       format_sql: true
 
 jwt:
-  expiration: 25200
+  expiration: 2520000
   secret: gkfrjsjanaksgdktjdhkswjsfjrzlqlzlwksgdkdmddo
 
 security:

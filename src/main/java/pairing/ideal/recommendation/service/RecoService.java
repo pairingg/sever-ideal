@@ -1,6 +1,7 @@
 package pairing.ideal.recommendation.service;
 
 import java.util.ArrayList;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pairing.ideal.member.entity.Member;
@@ -21,15 +22,21 @@ public class RecoService {
     private final IdealRepository idealRepository;
     private final MemberRepository memberRepository;
 
-    public IdealType enrollIdeal(EnrollRequest enrollRequest, Member member){
+    public IdealType enrollIdeal(EnrollRequest enrollRequest, Member member) {
         IdealType entity = enrollRequest.toEntity(member);
         IdealType save = idealRepository.save(entity);
         return save;
     }
 
+    public IdealType getIdeal(Member member) {
+        IdealType idealType = idealRepository.findByMember(member)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+        return idealType;
+    }
 
-//    public List<RecoResponse> getRecoResults (Member member) {
-    public List<RecoResponse> getRecoResults (Member member) {
+
+    //    public List<RecoResponse> getRecoResults (Member member) {
+    public List<RecoResponse> getRecoResults(Member member) {
 
         // 지금 요청 보낸사람의 이상형 정보
         IdealType idealType = idealRepository.findByMember(member)
@@ -50,7 +57,7 @@ public class RecoService {
 //        return matchingMembers.subList(0, 2);
     }
 
-    public List<KeywordResponse> getRecoKeywords () {
+    public List<KeywordResponse> getRecoKeywords() {
         return KeywordResponse.getKeywordList();
 
     }
