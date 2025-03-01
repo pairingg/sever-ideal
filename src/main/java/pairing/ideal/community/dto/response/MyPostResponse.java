@@ -1,4 +1,5 @@
 package pairing.ideal.community.dto.response;
+import java.time.LocalDateTime;
 import pairing.ideal.community.entity.Post;
 
 public record MyPostResponse(
@@ -9,10 +10,10 @@ public record MyPostResponse(
         String city,
         String content,
         String imageUrl,
-        String createdAt,
+        LocalDateTime createdAt,
         String profileImg
 ) {
-    public static MyPostResponse fromEntity(Post post, String formattedCreatedAt) {
+    public static MyPostResponse fromEntity(Post post) {
         String profileImg = (post.getMember().getPhoto() != null && !post.getMember().getPhoto().getPhoto().isEmpty())
                 ? post.getMember().getPhoto().getPhoto().get(0)
                 : null; // 첫 번째 사진이 없으면 null 반환
@@ -25,7 +26,7 @@ public record MyPostResponse(
                 post.getMember().getCity(),
                 post.getContent(),
                 post.getImageUrl(),
-                formattedCreatedAt,
+                post.getCreatedAt(),
                 profileImg
 
         );
