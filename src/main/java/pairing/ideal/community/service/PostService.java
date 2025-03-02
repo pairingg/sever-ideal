@@ -33,12 +33,20 @@ public class PostService {
     private String storageEndPoint;
     @Value("${cloud.ncp.storage.bucket-name-member}")
     private String storageMemberBucketName;
+    @Value("${cloud.ncp.storage.bucktet-name-board}")
+    private String storageBoardBucketName;
 
     /* 게시글 저장 */
     public Post savePost(PostRequest postRequest, Long userId) {
         Member member = memberRepository.findById(userId).orElse(null);
-        Post post = postRequest.toEntity(member, postRequest.content(), postRequest.imageUrl());
+        Post post = postRequest.toEntity(member, postRequest.content(), generateS3KeyFormUrl(postRequest.imageUrl()));
         return postRepository.save(post);
+    }
+
+    // S3 Key 생성
+    public String generateS3KeyFormUrl(String imageUrl) {
+        String s3Key = storageEndPoint + "/" + storageBoardBucketName + "/" + imageUrl;
+        return s3Key;
     }
 
     /* 모든 게시글 조회 */
@@ -46,7 +54,7 @@ public class PostService {
         List<Post> posts = postRepository.findAll();
         List<PostResponse> postResponses = new ArrayList<>();
         for (Post post : posts) {
-            postResponses.add(PostResponse.fromEntity(post, storageEndPoint, storageMemberBucketName));
+            postResponses.add(PostResponse.fromEntity(post));
         }
         return postResponses;
     }
@@ -66,7 +74,7 @@ public class PostService {
         Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new RuntimeException("해당 게시글이 존재하지 않습니다."));
 
-        return PostResponse.fromEntity(post, storageEndPoint, storageMemberBucketName);
+        return PostResponse.fromEntity(post);
     }
 
     /* 게시글 삭제 */
@@ -90,7 +98,7 @@ public class PostService {
         }
         post.update(postRequest.content(), postRequest.imageUrl());
         Post savedPost = postRepository.save(post);
-        return PostResponse.fromEntity(savedPost, storageEndPoint, storageMemberBucketName);
+        return PostResponse.fromEntity(savedPost);
     }
 
     /* 글 생성 날짜 formatting */

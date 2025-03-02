@@ -3,6 +3,7 @@ package pairing.ideal.member.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -55,13 +56,24 @@ public class MemberService {
 
         Photo photo = photoRepository.findByMember(byEmail)
                 .orElse(new Photo(byEmail, profileDTO.getImages()));
-        photo.updatePhoto(profileDTO.getImages()); // 새로운 정보로 업데이트
+
+        List<String> photos = new ArrayList<>();
+        for (String image: profileDTO.getImages()) {
+            photos.add(generateS3KeyFormUrl(image));
+        }
+
+        photo.updatePhoto(photos); // 새로운 정보로 업데이트
         photoRepository.save(photo);
 
         Member detail = byEmail.createDetail(hobby, photo);
         Member member = detail.addInfo(profileDTO);
         memberRepository.save(member);
         return "success";
+    }
+
+    // S3 Key 생성
+    public String generateS3KeyFormUrl(String imageUrl) {
+        return storageEndPoint + "/" + storageMemberBucketName + "/" + imageUrl;
     }
 
     public ProfileDTO getProfile(String email) {
