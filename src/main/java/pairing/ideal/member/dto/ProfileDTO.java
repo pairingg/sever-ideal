@@ -51,11 +51,11 @@ public class ProfileDTO {
         this.district = member.getDistrict();
 
         this.hobby = hobby.getHobby();
-        List<String> images = photo.getPhoto();
-        for (String image : images) {
-            fullImageUrls.add(endPoint + "/" + bucketName + "/" + image);
-        }
-        this.images = fullImageUrls;
+//        List<String> images = photo.getPhoto();
+//        for (String image : images) {
+//            fullImageUrls.add(endPoint + "/" + bucketName + "/" + image);
+//        }
+        this.images = photo.getPhoto();
         return this;
     }
 }
