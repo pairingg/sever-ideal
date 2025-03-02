@@ -28,6 +28,8 @@ import pairing.ideal.member.common.Gender;
 import pairing.ideal.member.common.Smoking;
 import pairing.ideal.member.dto.ProfileDTO;
 import pairing.ideal.recommendation.entity.IdealType;
+import java.time.Period;
+
 
 @Getter
 @Builder
@@ -98,8 +100,10 @@ public class Member {
     private IdealType idealType;
 
     public Member addInfo(ProfileDTO profileDTO) {
+        if (profileDTO.getBirth() != null) {
+            this.age = Period.between(profileDTO.getBirth(), LocalDate.now()).getYears();
+        }
         this.name = profileDTO.getName();
-        this.age = profileDTO.getAge();
         this.gender = profileDTO.getGender();
         this.birth = profileDTO.getBirth();
         this.mbti = profileDTO.getMbti();

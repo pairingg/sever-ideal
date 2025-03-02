@@ -6,24 +6,16 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.v3.oas.annotations.headers.Header;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pairing.ideal.member.config.S3Config;
+import pairing.ideal.member.dto.MemberIconDTO;
 import pairing.ideal.member.dto.ProfileDTO;
-import pairing.ideal.member.dto.requset.CompareFace;
 import pairing.ideal.member.dto.response.DrinkAndSmokeResponse;
 import pairing.ideal.member.entity.CustomUserDetails;
 import pairing.ideal.member.service.MemberService;
@@ -62,7 +54,7 @@ public class MemberController {
 //        if (memberService.photoExists(customUserDetails.getMember())) {
 //            return ResponseEntity.badRequest().body("Photo already exists for this member.");
 //        }
-        return ResponseEntity.ok(memberService.postProfile(profileDTO, customUserDetails.getMember()));
+        return ResponseEntity.ok(memberService.postProfile(profileDTO, customUserDetails.getMember().getEmail()));
     }
 
     @GetMapping("/profile")
@@ -78,7 +70,7 @@ public class MemberController {
     @PutMapping("/profile")
     public ResponseEntity<String> putProfile(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                  @RequestBody ProfileDTO profileDTO) {
-        return ResponseEntity.ok(memberService.postProfile(profileDTO, customUserDetails.getMember()));
+        return ResponseEntity.ok(memberService.postProfile(profileDTO, customUserDetails.getMember().getEmail()));
     }
 
     @DeleteMapping()
@@ -97,5 +89,10 @@ public class MemberController {
                                @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
         return true;
 //        return memberService.compareImage(file, customUserDetails.getMember());
+    }
+
+    @GetMapping("icon")
+    public MemberIconDTO getMemberIcon(@RequestHeader("X-Authorization-memberId") long userId){
+        return memberService.getMemberIcon(userId);
     }
 }

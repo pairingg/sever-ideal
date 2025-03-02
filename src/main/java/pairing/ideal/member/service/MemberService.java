@@ -15,6 +15,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import pairing.ideal.member.dto.MemberIconDTO;
 import pairing.ideal.member.dto.ProfileDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import pairing.ideal.member.entity.Hobby;
@@ -26,6 +27,7 @@ import pairing.ideal.member.repository.PhotoRepository;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,20 +43,24 @@ public class MemberService {
     private String storageMemberBucketName;
 
     @Transactional
-    public String postProfile(ProfileDTO profileDTO, Member member) {
+    public String postProfile(ProfileDTO profileDTO, String email) {
+
+        Member byEmail = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
         // 기존의 Hobby와 Photo를 조회
-        Hobby hobby = hobbyRepository.findByMember(member)
-                .orElse(new Hobby(member, profileDTO.getHobby()));
+        Hobby hobby = hobbyRepository.findByMember(byEmail)
+                .orElse(new Hobby(byEmail, profileDTO.getHobby()));
         hobby.updateHobby(profileDTO.getHobby()); // 새로운 정보로 업데이트
         hobbyRepository.save(hobby);
 
-        Photo photo = photoRepository.findByMember(member)
-                .orElse(new Photo(member, profileDTO.getImages()));
+        Photo photo = photoRepository.findByMember(byEmail)
+                .orElse(new Photo(byEmail, profileDTO.getImages()));
         photo.updatePhoto(profileDTO.getImages()); // 새로운 정보로 업데이트
         photoRepository.save(photo);
 
-        Member detail = member.createDetail(hobby, photo);
-        memberRepository.save(detail);
+        Member detail = byEmail.createDetail(hobby, photo);
+        Member member = detail.addInfo(profileDTO);
+        memberRepository.save(member);
         return "success";
     }
 
@@ -135,5 +141,11 @@ public class MemberService {
         } else {
             throw new RuntimeException("Failed to compare images: " + response.getStatusCode());
         }
+    }
+
+    public MemberIconDTO getMemberIcon(long userId) {
+        Member byId = memberRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid member"));
+        return MemberIconDTO.fromEntity(byId);
     }
 }

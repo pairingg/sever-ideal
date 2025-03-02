@@ -49,8 +49,8 @@ public class ProfileDTO {
         this.smoking = member.getSmoking();
         this.city = member.getCity();
         this.district = member.getDistrict();
-        this.hobby = hobby.getHobby();
 
+        this.hobby = hobby.getHobby();
         List<String> images = photo.getPhoto();
         for (String image : images) {
             fullImageUrls.add(endPoint + "/" + bucketName + "/" + image);
