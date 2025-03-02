@@ -15,12 +15,12 @@ public record PostResponse(
         Date createdAt,
         String profileImg
 ) {
-    public static PostResponse fromEntity(Post post, String storageEndPoint, String storageMemberBucketName) {
+    public static PostResponse fromEntity(Post post) {
         String profileImg = (post.getMember().getPhoto() != null && !post.getMember().getPhoto().getPhoto().isEmpty())
                 ? post.getMember().getPhoto().getPhoto().get(0)
                 : null; // 첫 번째 사진이 없으면 null 반환
 
-        String profileImgUrl = storageEndPoint + "/" + storageMemberBucketName + "/" + profileImg;
+//        String profileImgUrl = storageEndPoint + "/" + storageMemberBucketName + "/" + profileImg;
 
         return new PostResponse(
                 post.getPostId(),
