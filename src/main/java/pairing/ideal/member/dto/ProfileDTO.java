@@ -39,7 +39,6 @@ public class ProfileDTO {
 
 
     public ProfileDTO from(Member member, Hobby hobby, Photo photo) {
-        List<String> fullImageUrls = new ArrayList<>();
         this.name = member.getName();
         this.age = member.getAge();
         this.gender = member.getGender();
