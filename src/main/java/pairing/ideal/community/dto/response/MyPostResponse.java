@@ -17,12 +17,12 @@ public record MyPostResponse(
         Date createdAt,
         String profileImg
 ) {
-    public static MyPostResponse fromEntity(Post post, @Value("${cloud.ncp.storage.end-point}") String endPoint, @Value("${cloud.ncp.storage.bucket-name-member}")String bucketName) {
+    public static MyPostResponse fromEntity(Post post) {
         String profileImg = (post.getMember().getPhoto() != null && !post.getMember().getPhoto().getPhoto().isEmpty())
                 ? post.getMember().getPhoto().getPhoto().get(0)
                 : null; // 첫 번째 사진이 없으면 null 반환
-
-        String profileImgUrl = endPoint + "/" + bucketName + "/" + profileImg;
+//
+//        String profileImgUrl = endPoint + "/" + bucketName + "/" + profileImg;
 
         return new MyPostResponse(
                 post.getPostId(),
@@ -33,7 +33,7 @@ public record MyPostResponse(
                 post.getContent(),
                 post.getImageUrl(),
                 post.getCreatedAt(),
-                profileImgUrl
+                profileImg
 
         );
     }
