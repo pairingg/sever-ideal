@@ -72,11 +72,25 @@ public class PostController {
     @PostMapping("/{postId}/participations")
     public ResponseEntity<String> addParticipation(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                    @PathVariable(name = "postId") Long postId) {
-        postService.addParticipant(postId, customUserDetails.getMember().getUserId());
-        return ResponseEntity.status(HttpStatus.OK)
-                .body("참여가 완료되었습니다.");
+        Long userId = customUserDetails.getMember().getUserId();
 
+        try {
+            postService.addParticipant(postId, userId);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("참여가 완료되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(e.getMessage());
+        }
     }
+//    @PostMapping("/{postId}/participations")
+//    public ResponseEntity<String> addParticipation(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+//                                                   @PathVariable(name = "postId") Long postId) {
+//        postService.addParticipant(postId, customUserDetails.getMember().getUserId());
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .body("참여가 완료되었습니다.");
+//
+//    }
 
     /* 저요 목록 조회 */
     @GetMapping("/{postId}/participations")
