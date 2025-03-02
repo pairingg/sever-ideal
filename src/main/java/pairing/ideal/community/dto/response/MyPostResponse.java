@@ -1,7 +1,9 @@
 package pairing.ideal.community.dto.response;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
+import pairing.ideal.community.entity.Participant;
 import pairing.ideal.community.entity.Post;
 
 public record MyPostResponse(
@@ -13,7 +15,8 @@ public record MyPostResponse(
         String content,
         String imageUrl,
         Date createdAt,
-        String profileImg
+        String profileImg,
+        List<Participant> participantList
 ) {
     public static MyPostResponse fromEntity(Post post, @Value("${cloud.ncp.storage.end-point}") String endPoint, @Value("${cloud.ncp.storage.bucket-name-member}")String bucketName) {
         String profileImg = (post.getMember().getPhoto() != null && !post.getMember().getPhoto().getPhoto().isEmpty())
@@ -31,7 +34,8 @@ public record MyPostResponse(
                 post.getContent(),
                 post.getImageUrl(),
                 post.getCreatedAt(),
-                profileImgUrl
+                profileImgUrl,
+                post.getParticipants()
 
         );
     }

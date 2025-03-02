@@ -101,12 +101,32 @@ public class PostService {
 
     /* 저요 -> 참여자 생성 */
     public Participant addParticipant(Long postId, Long userId) {
-        Member member = memberRepository.findById(userId).orElse(null);
-        Post post  = postRepository.findByPostId(postId).orElseThrow(() -> new RuntimeException("해당 게시물은 존재하지 않습니다."));
-        Participant participant = Participant.builder().post(post).member(member).build();
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        Post post = postRepository.findByPostId(postId)
+                .orElseThrow(() -> new RuntimeException("해당 게시물은 존재하지 않습니다."));
+
+        // 게시글 작성자와 참여자가 동일한 경우 예외 발생
+        if ((post.getMember().getUserId())==(userId)) {
+            throw new IllegalArgumentException("본인이 작성한 게시글에는 참여할 수 없습니다.");
+        }
+
+        Participant participant = Participant.builder()
+                .post(post)
+                .member(member)
+                .build();
+
         System.out.println(participant.toString());
         return participantRepository.save(participant);
     }
+//    public Participant addParticipant(Long postId, Long userId) {
+//        Member member = memberRepository.findById(userId).orElse(null);
+//        Post post  = postRepository.findByPostId(postId).orElseThrow(() -> new RuntimeException("해당 게시물은 존재하지 않습니다."));
+//        Participant participant = Participant.builder().post(post).member(member).build();
+//        System.out.println(participant.toString());
+//        return participantRepository.save(participant);
+//    }
 
     /* 저요 -> 저요 목록 조회 */
     public List<ParticipantResponse> getParticipants(Long postId, Long userId) {
