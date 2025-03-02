@@ -15,8 +15,7 @@ public record MyPostResponse(
         String content,
         String imageUrl,
         Date createdAt,
-        String profileImg,
-        List<Participant> participantList
+        String profileImg
 ) {
     public static MyPostResponse fromEntity(Post post, @Value("${cloud.ncp.storage.end-point}") String endPoint, @Value("${cloud.ncp.storage.bucket-name-member}")String bucketName) {
         String profileImg = (post.getMember().getPhoto() != null && !post.getMember().getPhoto().getPhoto().isEmpty())
@@ -34,8 +33,7 @@ public record MyPostResponse(
                 post.getContent(),
                 post.getImageUrl(),
                 post.getCreatedAt(),
-                profileImgUrl,
-                post.getParticipants()
+                profileImgUrl
 
         );
     }
