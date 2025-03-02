@@ -32,7 +32,7 @@ import java.time.Period;
 
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -98,6 +98,23 @@ public class Member {
     @OneToOne(mappedBy = "member")
     @JsonManagedReference
     private IdealType idealType;
+
+    public Member updateProfile(ProfileDTO profileDTO, Hobby hobby, Photo photo) {
+        return this.toBuilder()
+                .name(profileDTO.getName() != null ? profileDTO.getName() : this.name)
+                .age(profileDTO.getAge() != 0 ? profileDTO.getAge() : this.age)
+                .gender(profileDTO.getGender() != null ? profileDTO.getGender() : this.gender)
+                .birth(profileDTO.getBirth() != null ? profileDTO.getBirth() : this.birth)
+                .mbti(profileDTO.getMbti() != null ? profileDTO.getMbti() : this.mbti)
+                .drink(profileDTO.getDrink() != null ? profileDTO.getDrink() : this.drink)
+                .smoking(profileDTO.getSmoking() != null ? profileDTO.getSmoking() : this.smoking)
+                .city(profileDTO.getCity() != null ? profileDTO.getCity() : this.city)
+                .district(profileDTO.getDistrict() != null ? profileDTO.getDistrict() : this.district)
+                .hobby(hobby)
+                .photo(photo)
+                .build();
+    }
+
 
     public Member addInfo(ProfileDTO profileDTO) {
         if (profileDTO.getBirth() != null) {
