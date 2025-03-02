@@ -38,4 +38,8 @@ public class Photo {
         this.member = save;
         this.photo = photo;
     }
+
+    public void updatePhoto(List<String> photo) {
+        this.photo = photo;
+    }
 }

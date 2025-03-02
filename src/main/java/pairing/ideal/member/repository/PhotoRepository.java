@@ -7,4 +7,5 @@ import pairing.ideal.member.entity.Photo;
 
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
     Optional<Photo> findByMember(Member byEmail);
+    boolean existsByMember(Member member);
 }

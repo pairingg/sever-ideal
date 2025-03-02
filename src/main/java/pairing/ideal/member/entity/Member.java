@@ -1,6 +1,7 @@
 package pairing.ideal.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,6 +27,7 @@ import pairing.ideal.member.common.Drinking;
 import pairing.ideal.member.common.Gender;
 import pairing.ideal.member.common.Smoking;
 import pairing.ideal.member.dto.ProfileDTO;
+import pairing.ideal.recommendation.entity.IdealType;
 
 @Getter
 @Builder
@@ -90,6 +92,10 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private List<Participant> participants= new ArrayList<>();
+
+    @OneToOne(mappedBy = "member")
+    @JsonManagedReference
+    private IdealType idealType;
 
     public Member addInfo(ProfileDTO profileDTO) {
         this.name = profileDTO.getName();

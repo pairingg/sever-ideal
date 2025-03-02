@@ -23,9 +23,16 @@ public class RecoService {
     private final MemberRepository memberRepository;
 
     public IdealType enrollIdeal(EnrollRequest enrollRequest, Member member) {
-        IdealType entity = enrollRequest.toEntity(member);
-        IdealType save = idealRepository.save(entity);
-        return save;
+        // 기존의 IdealType을 조회
+        IdealType idealType = idealRepository.findByMember(member)
+                .orElseGet(() -> enrollRequest.toEntity(member));
+        
+        // 새로운 정보로 업데이트
+        idealType.update(enrollRequest.getMbti(), enrollRequest.getAddressEntities(), 
+                         enrollRequest.getAge().getMin(), enrollRequest.getAge().getMax(), 
+                         enrollRequest.getHobby(), enrollRequest.getDrink(), enrollRequest.getSmoke());
+        
+        return idealRepository.save(idealType);
     }
 
     public IdealType getIdeal(Member member) {

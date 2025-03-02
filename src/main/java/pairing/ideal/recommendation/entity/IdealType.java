@@ -9,6 +9,7 @@ import pairing.ideal.member.common.Drinking;
 import pairing.ideal.member.common.Smoking;
 import pairing.ideal.member.converter.StringListConverter;
 import pairing.ideal.member.entity.Member;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,18 @@ public class IdealType {
     private Smoking smoke;
 
     @OneToOne
+    @JsonBackReference
     private Member member;
+
+    public void update(List<String> mbti, List<AddressEntity> address, int ageStart, int ageEnd, List<String> hobby, Drinking drink, Smoking smoke) {
+        this.mbti = mbti;
+        this.address = address;
+        this.ageStart = ageStart;
+        this.ageEnd = ageEnd;
+        this.hobby = hobby;
+        this.drink = drink;
+        this.smoke = smoke;
+    }
 }
 
 //export interface idealTypeContent {

@@ -36,4 +36,8 @@ public class Hobby {
         this.member = member;
         this.hobby = hobby;
     }
+
+    public void updateHobby(List<String> hobby) {
+        this.hobby = hobby;
+    }
 }

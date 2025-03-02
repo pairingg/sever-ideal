@@ -36,15 +36,19 @@ public class MemberService {
     private String storageMemberBucketName;
 
     @Transactional
-    public String postProfile(ProfileDTO profileDTO, String email){
-        Member byEmail = findByEmail(email);
-        Hobby hobby = new Hobby(byEmail, profileDTO.getHobby());
+    public String postProfile(ProfileDTO profileDTO, Member member) {
+        // 기존의 Hobby와 Photo를 조회
+        Hobby hobby = hobbyRepository.findByMember(member)
+                .orElse(new Hobby(member, profileDTO.getHobby()));
+        hobby.updateHobby(profileDTO.getHobby()); // 새로운 정보로 업데이트
         hobbyRepository.save(hobby);
 
-        Photo photo = new Photo(byEmail, profileDTO.getImages());
+        Photo photo = photoRepository.findByMember(member)
+                .orElse(new Photo(member, profileDTO.getImages()));
+        photo.updatePhoto(profileDTO.getImages()); // 새로운 정보로 업데이트
         photoRepository.save(photo);
 
-        Member detail = byEmail.createDetail(hobby, photo);
+        Member detail = member.createDetail(hobby, photo);
         memberRepository.save(detail);
         return "success";
     }
@@ -109,5 +113,10 @@ public class MemberService {
         } else {
             throw new RuntimeException("Failed to compare images: " + response.getStatusCode());
         }
+    }
+
+    public boolean photoExists(Member member) {
+        // PhotoRepository를 사용하여 Photo 엔티티가 존재하는지 확인
+        return photoRepository.existsByMember(member);
     }
 }

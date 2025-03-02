@@ -17,9 +17,9 @@ public class EnrollRequest {
     private List<String> mbti;
     private List<Address> address;
     private AgeRange age;
-    List<String> hobby = new ArrayList<>();
-    Drinking drink;
-    Smoking smoke;
+    private List<String> hobby = new ArrayList<>();
+    private Drinking drink;
+    private Smoking smoke;
 
 
     @Data
@@ -52,5 +52,16 @@ public class EnrollRequest {
                 .smoke(smoke)
                 .member(member)
                 .build();
+    }
+
+    public List<AddressEntity> getAddressEntities() {
+        List<AddressEntity> addressList = new ArrayList<>();
+        address.forEach(addr -> {
+            AddressEntity entityAddress = new AddressEntity();
+            entityAddress.setCity(addr.getCity());
+            entityAddress.setDistrict(addr.getDistrict());
+            addressList.add(entityAddress);
+        });
+        return addressList;
     }
 }
