@@ -1,11 +1,7 @@
 package pairing.ideal.member.entity;
 
-import jakarta.persistence.Convert;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +23,7 @@ public class Photo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long photoId;
 
+    @Lob
     @Convert(converter = StringListConverter.class)
     @Builder.Default
     private List<String> photo = new ArrayList<>();
