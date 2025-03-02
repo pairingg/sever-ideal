@@ -33,7 +33,7 @@ public class PostService {
     private String storageEndPoint;
     @Value("${cloud.ncp.storage.bucket-name-member}")
     private String storageMemberBucketName;
-    @Value("${cloud.ncp.storage.bucket-name-board}")
+    @Value("${cloud.ncp.storage.bucket-name-community}")
     private String storageBoardBucketName;
 
     /* 게시글 저장 */
