@@ -71,7 +71,7 @@ public class MemberService {
         Photo photo = photoRepository.findByMember(byEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid photo"));
         ProfileDTO profileDTO = new ProfileDTO();
-        return profileDTO.from(byEmail, hobby, photo, storageEndPoint, storageMemberBucketName);
+            return profileDTO.from(byEmail, hobby, photo, storageEndPoint, storageMemberBucketName);
     }
 
     public ProfileDTO getOtherProfile(long userId) {

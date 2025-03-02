@@ -38,7 +38,7 @@ public class ProfileDTO {
     private List<String> images = new ArrayList<>();
 
 
-    public ProfileDTO from(Member member, Hobby hobby, Photo photo,@Value("${cloud.ncp.storage.end-point}") String endPoint, @Value("${cloud.ncp.storage.bucket-name-member}")String bucketName) {
+    public ProfileDTO from(Member member, Hobby hobby, Photo photo, String storageEndPoint, String storageMemberBucketName) {
         List<String> fullImageUrls = new ArrayList<>();
         this.name = member.getName();
         this.age = member.getAge();
@@ -53,7 +53,7 @@ public class ProfileDTO {
         this.hobby = hobby.getHobby();
         List<String> images = photo.getPhoto();
         for (String image : images) {
-            fullImageUrls.add(endPoint + "/" + bucketName + "/" + image);
+            fullImageUrls.add(storageMemberBucketName + "/" + storageEndPoint + "/" + image);
         }
         this.images = fullImageUrls;
         return this;
