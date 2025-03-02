@@ -1,27 +1,32 @@
 package pairing.ideal.member.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.*;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import pairing.ideal.member.dto.ProfileDTO;
-import pairing.ideal.member.dto.requset.CompareFace;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import pairing.ideal.member.entity.Hobby;
 import pairing.ideal.member.entity.Member;
 import pairing.ideal.member.entity.Photo;
 import pairing.ideal.member.repository.HobbyRepository;
 import pairing.ideal.member.repository.MemberRepository;
 import pairing.ideal.member.repository.PhotoRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.HashMap;
+
+import java.io.IOException;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,70 +58,82 @@ public class MemberService {
         return "success";
     }
 
-    public ProfileDTO getProfile(String email){
+    public ProfileDTO getProfile(String email) {
         Member byEmail = findByEmail(email);
         Hobby hobby = hobbyRepository.findByMember(byEmail)
-                .orElseThrow(()->new IllegalArgumentException("Invalid hobby"));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid hobby"));
         Photo photo = photoRepository.findByMember(byEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid photo"));
         ProfileDTO profileDTO = new ProfileDTO();
         return profileDTO.from(byEmail, hobby, photo, storageEndPoint, storageMemberBucketName);
     }
 
-    public ProfileDTO getOtherProfile(long userId){
+    public ProfileDTO getOtherProfile(long userId) {
         Member byId = memberRepository.findById(userId)
-                .orElseThrow(()->new IllegalArgumentException("Invalid member"));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid member"));
         calHeart(byId, 1);
         return getProfile(byId.getEmail());
     }
 
-    public String deleteProfile(String email){
+    public String deleteProfile(String email) {
         Member byEmail = findByEmail(email);
         memberRepository.delete(byEmail);
         return "success";
     }
 
     @Async
-    public void calHeart(Member member,long score){
+    public void calHeart(Member member, long score) {
         member.calHeart(score);
         memberRepository.save(member);
     }
 
-    private Member findByEmail(String email){
+    private Member findByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email"));
     }
 
-    public String compareImage(CompareFace compareFace, Member member) {
-        String url = "http://face-compare:8000/member/face"; // 다른 컨테이너 이름을 사용
+    public boolean compareImage(MultipartFile file, Member member) throws IOException {
+        String url = "http://localhost:8000/member/face/";
 
         Photo photo = photoRepository.findByMember(member)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid photo"));
         List<String> urls = photo.getPhoto();
 
+        List<String> fullUrls = urls.stream()
+                .map(photoUrl -> storageEndPoint + "/" + storageMemberBucketName + "/" + photoUrl)
+                .collect(Collectors.toList());
+
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-        // 요청 본문 설정
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("file", compareFace.getFileData());
-        requestBody.put("urls", urls);
+        MultiValueMap<String, Object> requestBody = new LinkedMultiValueMap<>();
+        requestBody.add("file", new ByteArrayResource(file.getBytes()) {
+            @Override
+            public String getFilename() {
+                return file.getOriginalFilename();
+            }
+        });
+        requestBody.add("urls", String.join(",", fullUrls));
 
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
-        // 요청 보내기
-        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
+        restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
 
-        // 응답 처리
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+
+        if (response.getStatusCode().is3xxRedirection()) {
+            String redirectUrl = response.getHeaders().getLocation().toString();
+            response = restTemplate.exchange(redirectUrl, HttpMethod.POST, requestEntity, String.class);
+        }
+
         if (response.getStatusCode().is2xxSuccessful()) {
-            return response.getBody(); // 성공 시 응답 본문 반환
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(response.getBody());
+            return rootNode.path("is_same_person").asBoolean();
         } else {
             throw new RuntimeException("Failed to compare images: " + response.getStatusCode());
         }
-    }
-
-    public boolean photoExists(Member member) {
-        // PhotoRepository를 사용하여 Photo 엔티티가 존재하는지 확인
-        return photoRepository.existsByMember(member);
     }
 }

@@ -1,8 +1,12 @@
 package pairing.ideal.member.controller;
 
 import com.amazonaws.HttpMethod;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import pairing.ideal.member.config.S3Config;
 import pairing.ideal.member.dto.ProfileDTO;
 import pairing.ideal.member.dto.requset.CompareFace;
@@ -88,8 +93,9 @@ public class MemberController {
     }
 
     @PostMapping("face")
-    public String compareImage(@RequestBody CompareFace compareFace,
-                               @AuthenticationPrincipal CustomUserDetails customUserDetails){
-        return memberService.compareImage(compareFace, customUserDetails.getMember());
+    public boolean compareImage(@RequestParam("file") MultipartFile file,
+                               @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+        return true;
+//        return memberService.compareImage(file, customUserDetails.getMember());
     }
 }
