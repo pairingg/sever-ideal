@@ -48,13 +48,13 @@ public class MemberController {
     }
 
     @PostMapping("/profile")
-    public ResponseEntity<String> postProfile(@RequestBody ProfileDTO profileDTO,
+    public ProfileDTO postProfile(@RequestBody ProfileDTO profileDTO,
                                       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         // Photo 엔티티가 이미 존재하는지 확인
 //        if (memberService.photoExists(customUserDetails.getMember())) {
 //            return ResponseEntity.badRequest().body("Photo already exists for this member.");
 //        }
-        return ResponseEntity.ok(memberService.postProfile(profileDTO, customUserDetails.getMember().getEmail()));
+        return memberService.postProfile(profileDTO, customUserDetails.getMember().getEmail());
     }
 
     @GetMapping("/profile")
@@ -68,9 +68,9 @@ public class MemberController {
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<String> putProfile(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+    public ProfileDTO putProfile(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                  @RequestBody ProfileDTO profileDTO) {
-        return ResponseEntity.ok(memberService.postProfile(profileDTO, customUserDetails.getMember().getEmail()));
+        return memberService.postProfile(profileDTO, customUserDetails.getMember().getEmail());
     }
 
     @DeleteMapping()

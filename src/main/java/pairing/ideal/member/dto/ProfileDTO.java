@@ -38,8 +38,7 @@ public class ProfileDTO {
     private List<String> images = new ArrayList<>();
 
 
-    public ProfileDTO from(Member member, Hobby hobby, Photo photo, String storageEndPoint, String storageMemberBucketName) {
-        List<String> fullImageUrls = new ArrayList<>();
+    public ProfileDTO from(Member member, Hobby hobby, Photo photo) {
         this.name = member.getName();
         this.age = member.getAge();
         this.gender = member.getGender();
@@ -49,13 +48,8 @@ public class ProfileDTO {
         this.smoking = member.getSmoking();
         this.city = member.getCity();
         this.district = member.getDistrict();
-
         this.hobby = hobby.getHobby();
-        List<String> images = photo.getPhoto();
-        for (String image : images) {
-            fullImageUrls.add(storageEndPoint + "/" +storageMemberBucketName + "/" + image);
-        }
-        this.images = fullImageUrls;
+        this.images = member.getPhoto().getPhoto();
         return this;
     }
 }

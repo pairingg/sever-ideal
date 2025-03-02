@@ -44,7 +44,7 @@ public class MemberService {
     private String storageMemberBucketName;
 
     @Transactional
-    public String postProfile(ProfileDTO profileDTO, String email) {
+    public ProfileDTO postProfile(ProfileDTO profileDTO, String email) {
 
         Member byEmail = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
@@ -68,13 +68,14 @@ public class MemberService {
         Member detail = byEmail.createDetail(hobby, photo);
         Member member = detail.addInfo(profileDTO);
         memberRepository.save(member);
-        return "success";
+        return new ProfileDTO().from(member, hobby, photo);
     }
 
     // S3 Key 생성
     public String generateS3KeyFormUrl(String imageUrl) {
         return storageEndPoint + "/" + storageMemberBucketName + "/" + imageUrl;
     }
+
 
     public ProfileDTO getProfile(String email) {
         Member byEmail = findByEmail(email);
@@ -83,7 +84,7 @@ public class MemberService {
         Photo photo = photoRepository.findByMember(byEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid photo"));
         ProfileDTO profileDTO = new ProfileDTO();
-            return profileDTO.from(byEmail, hobby, photo, storageEndPoint, storageMemberBucketName);
+            return profileDTO.from(byEmail, hobby, photo);
     }
 
     public ProfileDTO getOtherProfile(long userId) {
