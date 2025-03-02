@@ -53,7 +53,7 @@ public class ProfileDTO {
         this.hobby = hobby.getHobby();
         List<String> images = photo.getPhoto();
         for (String image : images) {
-            fullImageUrls.add(storageMemberBucketName + "/" + storageEndPoint + "/" + image);
+            fullImageUrls.add(storageEndPoint + "/" +storageMemberBucketName + "/" + image);
         }
         this.images = fullImageUrls;
         return this;
