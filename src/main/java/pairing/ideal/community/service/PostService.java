@@ -31,8 +31,6 @@ public class PostService {
     private final MemberRepository memberRepository;
     @Value("${cloud.ncp.storage.end-point}")
     private String storageEndPoint;
-    @Value("${cloud.ncp.storage.bucket-name-member}")
-    private String storageMemberBucketName;
     @Value("${cloud.ncp.storage.bucket-name-community}")
     private String storageBoardBucketName;
 
@@ -64,7 +62,7 @@ public class PostService {
         List<Post> myPosts = postRepository.findByMember_UserId(userId);
         List<MyPostResponse> postResponses = new ArrayList<>();
         for (Post post : myPosts) {
-            postResponses.add(MyPostResponse.fromEntity(post, storageEndPoint, storageMemberBucketName));
+            postResponses.add(MyPostResponse.fromEntity(post));
         }
         return postResponses;
     }
@@ -150,3 +148,4 @@ public class PostService {
         return participantResponses;
     }
 }
+
